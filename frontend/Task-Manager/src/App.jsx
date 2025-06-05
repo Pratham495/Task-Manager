@@ -7,7 +7,9 @@ import Dashboard from './pages/Admin/Dashboard'
 import ManageTask from './pages/Admin/ManageTask'
 import CreateTask from './pages/Admin/CreateTask'
 import ManageUsers from './pages/Admin/ManageUsers'
-import Dashboard from './pages/User/Dashboard'
+import UserDashboard from './pages/User/UserDashboard'
+import MyTask from './pages/User/MyTask'
+import ViewTaskDetails from './pages/User/ViewTaskDetails'
 
 
 function App() {
@@ -30,7 +32,9 @@ function App() {
             {/* User Routes*/}
 
           <Route element={<PrivateRoute allowedRoles={('user')}/>}>
-          <Route path='/user/dashboard' element={<Dashboard/>}/>
+          <Route path='/user/dashboard' element={<UserDashboard/>}/>
+          <Route path='/user/my-tasks' element={<MyTask/>}/>
+          <Route path='/user/tasks-details/:id' element={<ViewTaskDetails/>}/>
           </Route>
 
 
