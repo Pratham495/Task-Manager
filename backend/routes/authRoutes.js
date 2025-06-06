@@ -1,9 +1,13 @@
-// import React from 'react'
+ const express = require('express');
+const { registerUser, loginUser, getUserProfile, updateUserProfile } = require('../Controllers/authController');
+const { protect } = require('../middlewares/authMiddleware');
 
-// function authRoutes() {
-//   return (
-//     <div>authRoutes</div>
-//   )
-// }
+ const router = express.Router();
 
-// export default authRoutes
+ //Auth Routes
+ router.post("/register" , registerUser);
+ router.post("/login" , loginUser);
+ router.post("/profile" ,protect, getUserProfile);
+ router.post("/profile" , protect, updateUserProfile);
+
+ module.exports = router;

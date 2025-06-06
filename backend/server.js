@@ -2,6 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const { connect } = require("http2");
+const connectDB = require('./config/db')
+const authRoutes = require('./routes/authRoutes')
+
 // const { default: authRoutes } = require("./routes/authRoutes");
 // const { default: userRoutes } = require("./routes/userRoutes");
 // const { default: taskRoutes } = require("./routes/taskRoutes");
@@ -19,11 +23,14 @@ app.use(
     })
 );
 
+//connect database
+connectDB();
+
 //middleware
 app.use(express.json());
 
 // //Routes
-// app.use("/api/auth", authRoutes)
+app.use("/api/auth", authRoutes)
 // app.use("/api/users", userRoutes)
 // app.use("/api/tasks", taskRoutes)
 // app.use("/api/reports", reportRoutes)
