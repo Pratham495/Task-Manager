@@ -11,16 +11,16 @@ const Inputs = ({value, onChange, label, placeholder, type}) => {
     return (
     
     <div>
-        <label className="text-[33px] text-slate-800">{label}</label>
+        <label className="text-[18px] text-slate-800">{label}</label>
         <div className='input-box'>
                 <input
                 type={
                     type =="password" ?(showPassword ? "text" : "password"):type
                 }
-                pkaceholder={placeholder}
+                placeholder={placeholder}
                 className='w-full bg-transparent outline-none'
                 value={value}
-                onChange={(e) => onchange(e)}
+                onChange={(e) => onChange(e)}
                 />
 
                 {type === "password" && (

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Inputs from '../../components/Inputs/Inputs';
+import Inputs from "../../components/Inputs/Inputs";
+import { ValidateEmail } from "../../utils/helper";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,22 +13,33 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Add basic validation (optional)
-    if (!email || !password) {
-      setError("Please enter both email and password.");
+    if (!email || !password || !ValidateEmail(email)) {
+      if (!email && !password) {
+        setError("Please enter both valid fields.");
+      } else if (!email || !ValidateEmail(email)) {
+        setError("Please enter a valid email address.");
+      } else if (!password) {
+        setError("Please enter a valid password.");
+      }
       return;
     }
 
     setError(null);
-    // Your login logic here
     console.log({ email, password });
-    navigate("/dashboard"); // example redirect
+    navigate("/dashboard");
   };
+
+  //login api call
+
+  try {
+  } catch (error) {}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back 👋</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          Welcome Back 👋
+        </h3>
         <p className="text-sm text-gray-500 mb-6">
           Please enter your details to log in
         </p>
@@ -51,7 +63,7 @@ const Login = () => {
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             label="Password"
-            placeholder="••••••••"
+            placeholder="1232"
             type="password"
           />
 
@@ -67,7 +79,7 @@ const Login = () => {
           Don’t have an account?
           <span
             className="text-blue-600 cursor-pointer font-medium hover:underline ml-1"
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/signUp")}
           >
             Sign up
           </span>
