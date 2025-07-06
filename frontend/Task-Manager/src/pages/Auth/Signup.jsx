@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 import Inputs from "../../components/Inputs/Inputs";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPaths";
+import uploadImage from "../../utils/uploadImage";
+import { useContext } from "react";
 
 const Signup = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -11,20 +16,60 @@ const Signup = () => {
   const [adminInviteToken, setAdminInviteToken] = useState("");
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  const {updateUser} = useContext(UserContext);
+    const navigate = useNavigate();
 
-  const handleSignup = (e) => {
-    e.preventDefault();
-
-    if (!fullName || !email || !password || !adminInviteToken) {
-      setError("Please fill in all the required fields.");
-      return;
+ const handleSignup = async (e) => {
+  e.preventDefault();
+  setError(null);
+  if (!fullName || !email || !password || !adminInviteToken) {
+    setError("Please fill in all the required fields.");
+    return;
+  }
+  let profileImageUrl = ""
+  try {
+    if (profilePic) {
+      const imageUploadRes = await uploadImage(profilePic);
+      profileImageUrl = imageUploadRes.imageUrl || "";
     }
 
-    setError(null);
-    console.log({ fullName, email, password, adminInviteToken, profilePic });
-    navigate("/dashboard");
-  };
+    const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+      name: fullName,
+      email,
+      password,
+      adminInviteToken,
+      profileImageUrl 
+    });
+    console.log(response)
+
+    const { token, role } = response.data;
+    console.log(token)
+    console.log(role)
+    if (token) {
+      alert('token valid')
+      localStorage.setItem("token", token);
+      updateUser(response.data);
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
+    }
+
+  } catch (err) {
+  console.error("Signup error:", err);
+
+  if (err.response) {
+    console.error("Response status:", err.response.status);
+    console.error("Response data:", err.response.data);
+    setError(err.response.data.message + " - " + (err.response.data.details || ""));
+  } else {
+    setError("Network / CORS error:", err.message);
+    setError("Network error. Please try again.");
+  }
+}
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4">

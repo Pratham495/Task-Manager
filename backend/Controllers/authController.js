@@ -15,6 +15,7 @@ const registerUser = async (req, res) =>{
 
         //check if user already exists
         const userExists = await User.findOne({email});
+        console.log(userExists)
         if(userExists)
         {
             return  res.status(400).json({message:"User Already Exists"});
@@ -49,10 +50,11 @@ const registerUser = async (req, res) =>{
             profileImageUrl: user.profileImageUrl,
             token: generateToken(user._id),
         })
-    }catch (error)
-    {
-        res.status(500).json({message:"server error" ,error: error.message});
-    }
+    }catch (error) {
+  console.error("Register user failed:", error);
+  res.status(500).json({ message: "server error", details: error.message });
+}
+
 };
 const loginUser = async(req, res)=>{
      try

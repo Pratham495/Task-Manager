@@ -28,7 +28,6 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
 };
 
   const onChooseFile = () => {
-    console.log('hii')
     inputRef.current.click();
   };
 
