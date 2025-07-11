@@ -10,7 +10,7 @@ import ManageUsers from './pages/Admin/ManageUsers'
 import UserDashboard from './pages/User/UserDashboard'
 import MyTask from './pages/User/MyTask'
 import ViewTaskDetails from './pages/User/ViewTaskDetails'
-import UserProvider from './context/UserContext'
+import UserProvider, { UserContext } from './context/UserContext'
 
 
 function App() {
@@ -52,7 +52,7 @@ function App() {
 export default App
 
 const Root = () => {
-  const {user , loading } = useContext(userContext);
+  const {user , loading } = useContext(UserContext);
 
   if(loading) return <Outlet/>
 
