@@ -11,6 +11,10 @@ import InfoCard from '../../components/Cards/InfoCard';
 import { addThousandsSeparator } from '../../utils/helper';
 import { LuArrowRight } from 'react-icons/lu';
 import TaskListTable from '../../components/layouts/TaskListTable';
+import CustomPieChart from '../../components/Charts/CustomPieChart';
+import CustomBarChart from '../../components/Charts/CustomBarChart';
+
+const COLORS = ['#8D51FF', '#00B8DB', '#7BCE00']; 
 
 const Dashboard = () => {
   useUserAuth();
@@ -22,6 +26,27 @@ const Dashboard = () => {
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
 
+  const prepareChartData = (data) => {
+    const taskDistribution = data?.taskDistribution || null;
+    const taskPriorityLevels = data?.taskPriorityLevels || null;
+
+    const taskDistributionData = [
+      {status: "Pending", count: taskDistribution?.Pending || 0},
+      {status: "In Progress", count: taskDistribution?.InProgress || 0},
+      {status: "Completed", count: taskDistribution?.Completed || 0},
+    ]
+    setPieChartData(taskDistributionData);
+
+    const PriorityLevelData = [
+      {status: "Low", count: taskPriorityLevels?.Low || 0},
+      {status: "Medium", count: taskPriorityLevels?.Medium || 0},
+      {status: "High", count: taskPriorityLevels?.High || 0},
+    ];
+
+    setBarChartData(PriorityLevelData);
+  
+  }
+ 
   const getDashboardData = async () => {
     try{
       const response = await axiosInstance.get(
@@ -30,6 +55,7 @@ const Dashboard = () => {
       if(response.data)
       {
         setDashboardData(response.data);
+        prepareChartData(response.data?.charts || null)
       }
     }
     catch (error)
@@ -38,6 +64,7 @@ const Dashboard = () => {
     }
   }
 console.log(dashboardData, 'dashboarddata');
+console.log(pieChartData)
 console.log("Recent Tasks:", dashboardData?.recentTask);
   useEffect(()=>{
     getDashboardData();
@@ -48,55 +75,86 @@ console.log("Recent Tasks:", dashboardData?.recentTask);
     navigate('/admin/tasks')
   }
   return (
-    <DashboardLayout activeMenu="Dashboard">
-  <div className='my-5'>
-    <div className='mb-6'>
-      <h2 className='text-xl md:text-2xl font-semibold'>Good Morning! {user?.name}</h2>
-      <p className='text-xs md:text-sm text-gray-400 mt-1.5'>
-        {moment().format("dddd Do MMM YYYY")}
+<DashboardLayout activeMenu="Dashboard">
+  <div className="my-8 space-y-8">
+
+    {/* Greeting Section */}
+    <div>
+      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+        Good Morning, {user?.name}!
+      </h2>
+      <p className="text-sm md:text-base text-gray-500 mt-1">
+        {moment().format("dddd, Do MMM YYYY")}
       </p>
     </div>
 
-    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+    {/* Info Cards */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       <InfoCard
         label="Total Tasks"
         value={addThousandsSeparator(dashboardData?.charts?.taskDistribution?.All || 0)}
         color="bg-primary"
       />
       <InfoCard
-        label="Pending Tasks"
+        label="Pending"
         value={addThousandsSeparator(dashboardData?.charts?.taskDistribution?.Pending || 0)}
         color="bg-violet-500"
       />
       <InfoCard
-        label="In Progress Tasks"
+        label="In Progress"
         value={addThousandsSeparator(dashboardData?.charts?.taskDistribution?.InProgress || 0)}
         color="bg-cyan-500"
       />
       <InfoCard
-        label="Completed Tasks"
+        label="Completed"
         value={addThousandsSeparator(dashboardData?.charts?.taskDistribution?.Completed || 0)}
         color="bg-lime-500"
       />
     </div>
-  </div>
 
-  <div className='grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6'>
-    <div className='md:col-span-2'>
-      <div className='card'>
-        <div className=' flex items-center justify-between'>
-           <h5 className=' text-lg'> Recent Tasks</h5>
+    {/* Charts & Table Section */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-           <button className='card-btn' onClick={onSeeMore}>
-            See All <LuArrowRight className='text-base'/>
-           </button>
+      {/* Pie Chart */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 transition-transform hover:scale-[1.02]">
+        <div className="flex items-center justify-between">
+          <h5 className="text-lg font-semibold">Task Distribution</h5>
         </div>
+        <CustomPieChart
+          data={pieChartData}
+          label="Total Balance"
+          color={COLORS}
+        />
+      </div>
 
-        <TaskListTable tableData={dashboardData?.recentTask || []}/>
+      {/* Bar Chart */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 transition-transform hover:scale-[1.02]">
+        <div className="flex items-center justify-between ">
+          <h5 className="text-lg font-semibold">Task Priority Levels</h5>
+        </div>
+        <CustomBarChart
+          data={barChartData}
+          
+        />
+      </div>
+
+      {/* Recent Tasks Table (spans 2 cols on larger screens) */}
+      <div className="md:col-span-2 bg-white rounded-2xl shadow-lg p-6 transition-transform hover:scale-[1.02]">
+        <div className="flex items-center justify-between mb-4">
+          <h5 className="text-lg font-semibold">Recent Tasks</h5>
+          <button
+            className="inline-flex items-center text-primary hover:text-primary-dark font-medium transition-colors"
+            onClick={onSeeMore}
+          >
+            See All <LuArrowRight className="ml-1 text-base" />
+          </button>
+        </div>
+        <TaskListTable tableData={dashboardData?.recentTask || []} />
       </div>
     </div>
   </div>
 </DashboardLayout>
+
 
   )
 }
