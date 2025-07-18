@@ -10,6 +10,8 @@ import { LuTrash2 } from 'react-icons/lu';
 import { useState } from 'react';
 import SelectDropdown from '../../components/Inputs/SelectDropdown';
 import SelectUsers from '../../components/Inputs/SelectUsers';
+import TodoListInput from '../../components/Inputs/TodoListInput';
+import AddAttachmentsInput from '../../components/Inputs/AddAttachmentsInput';
 
 
 const CreateTask = () => {
@@ -32,7 +34,7 @@ const CreateTask = () => {
   const [loading, setLoading] = useState(false);
   const[openDeleteAlert, setOpenDeleteAlert] = useState(false);
 
-  const hanldeValueChange = (key,value) => {
+  const handleValueChange = (key,value) => {
     setTaskData((prevdata) => ({
       ...prevdata, [key]: value
     }))
@@ -56,7 +58,43 @@ const CreateTask = () => {
   //update task
    const updateTask = async () =>{};
 
-    const handleSubmit = async () =>{};
+    const handleSubmit = async () => { 
+      setError(null);
+
+      //Input validation
+      if(!taskData.title.trim())
+      {
+        setError('Title is Required.')
+        return;
+      }
+       if(!taskData.description.trim())
+      {
+        setError('Description is Required.')
+        return;
+      }
+       if(!taskData.dueDate)
+      {
+        setError('Due date is Required.')
+        return;
+      }
+       if(!taskData.assignedTo?.length === 0)
+      {
+        setError('Task not assogined to any member.')
+        return;
+      }
+       if(!taskData.todoChecklist?.length === 0)
+      {
+        setError('Add atlease one todo task')
+        return;
+      }
+
+      if(taskId)
+      {
+        updateTask();
+        return;
+      }
+      CreateTask(); 
+    };
 
     //const Task info by ID
     const getTaskDetailsByID = async () => {};
@@ -65,103 +103,132 @@ const CreateTask = () => {
     const deleteTask = async () => {};
   return (
     <DashboardLayout activeMenu="Create Task">
-    <div className='mt-5'>
-      <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
-        <div className="form-card col-span-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl md:text-xl font-medium">
-              {taskId ? "Update Task" : "Create Task"}
-            </h2>
+<div className="mt-6">
+  <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100">
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <h2 className="text-xl font-semibold text-slate-800">
+        {taskId ? "Update Task" : "Create Task"}
+      </h2>
+      {taskId && (
+        <button
+          onClick={() => setOpenDeleteAlert(true)}
+          className="flex items-center gap-1.5 text-sm text-rose-600 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition"
+        >
+          <LuTrash2 className="text-base" />
+          Delete
+        </button>
+      )}
+    </div>
 
-            {taskId && (
-              <button 
-              className='flex items-center gap-1.5 text-[13px] font-medium
-              text-rose-500 bg-rose-50 rounded px-2 py-1 border border-rose-100 
-              hover:border-rose-300 cursor-pointer'
-              onClick={() => setOpenDeleteAlert(true)}
-              >
-                <LuTrash2 className='text-base'/> Delete
-              </button>
-            )}
-          </div>
+    {/* Task Title */}
+    <div className="mt-6">
+      <label className="text-xs font-medium text-slate-600 mb-1 block">
+        Task Title
+      </label>
+      <input
+        type="text"
+        placeholder="Create App UI"
+        className="form-input w-full"
+        value={taskData.title}
+        onChange={({ target }) => handleValueChange("title", target.value)}
+      />
+    </div>
 
-          <div className='mt-4'>
-            <label className="text-xs font-medium text-slate-600">
-              Task Title
-            </label>
+    {/* Description */}
+    <div className="mt-5">
+      <label className="text-xs font-medium text-slate-600 mb-1 block">
+        Description
+      </label>
+      <textarea
+        rows={4}
+        placeholder="Describe Task"
+        className="form-input w-full"
+        value={taskData.description}
+        onChange={({ target }) => handleValueChange("description", target.value)}
+      />
+    </div>
 
-            <input
-            placeholder='Create App UI'
-            className='form-input'
-            value={taskData.title}
-            onChange={({target}) => 
-            hanldeValueChange("title", target.value)
-            }
-            />
-          </div>
+    {/* Priority & Due Date */}
+    <div className="mt-5 flex flex-col md:flex-row gap-4">
+      <div className="w-full md:w-1/2">
+        <label className="text-xs font-medium text-slate-600 mb-1 block">
+          Priority
+        </label>
+        <SelectDropdown
+          options={PRIORITY_DATA}
+          value={taskData.priority}
+          onChange={(value) => handleValueChange("priority", value)}
+          placeholder="Select Priority"
+        />
+      </div>
 
-          <div className='mt-4'>
-            <label className='text-xs font-medium text-slate-600'>
-              Description
-            </label>
-
-            <textarea
-            placeholder='Describe Task'
-            className='form-input'
-            rows={4}
-            value={taskData.description}
-            onChange={({target}) =>
-              hanldeValueChange("description" , target.value)
-            }
-            />
-          </div>
-
-          <div className="grid grid-cols-12 gap-4 mt-2">
-            <div className="col-span-6 md:col-span-4">
-              <label className='text-xs font-medium text-slate-600'>
-                Priority
-              </label>
-
-              <SelectDropdown
-              options={PRIORITY_DATA}
-              value={taskData.priority}
-              onChange={(value) => hanldeValueChange("priority",value)}
-              placeholder="Select Priority"
-              />
-            </div>
-
-            <div className="col-span-6 md:col-span-4">
-              <label  className="text-xs font-medium text-slate-600">
-                Due Date
-              </label>
-
-              <input
-              placeholder='Create App UI'
-              className='form-input'
-              value={taskData.dueDate}
-              onChange={({target}) => 
-              hanldeValueChange("dueDate", target.value)
-              }
-              type='date'
-              />
-            </div>
-
-            <div className="">
-              <label  className="">
-                Assign To
-              </label>
-
-              <SelectUsers
-              selectedUsers={taskData.assignedTo}
-              setSelectedUsers={(value)=>{
-                hanldeValueChange("assignedTo", value);
-              }}
-              />
-            </div>
-          </div>
-        </div>
+      <div className="w-full md:w-1/2">
+        <label className="text-xs font-medium text-slate-600 mb-1 block">
+          Due Date
+        </label>
+        <input
+          type="date"
+          className="form-input w-full"
+          value={taskData.dueDate}
+          onChange={({ target }) => handleValueChange("dueDate", target.value)}
+        />
       </div>
     </div>
+
+    {/* Assigned Users */}
+    <div className="mt-5">
+      <label className="text-xs font-medium text-slate-600 mb-1 block">
+        Assign To
+      </label>
+      <SelectUsers
+        selectedUsers={taskData.assignedTo}
+        setSelectedUsers={(value) => handleValueChange("assignedTo", value)}
+      />
+    </div>
+
+    {/* Checklist */}
+    <div className="mt-5">
+      <label className="text-xs font-medium text-slate-600 mb-1 block">
+        TODO CheckList
+      </label>
+      <TodoListInput
+        todoList={taskData?.todoChecklist}
+        setTodoList={(value) => handleValueChange("todoChecklist", value)}
+      />
+    </div>
+
+    <div className="mt-3">
+      <label className="text-xs font-medium text-slate-600">
+        Add Attachments
+      </label>
+
+      <AddAttachmentsInput
+      attachments={taskData?.attachments}
+      setAttachments={(value)=>
+        handleValueChange("attachments", value)
+      }
+      
+      />
+    </div>
+
+    {error && (
+      <p className="text-xs font-medium text-red-500 mt-5">{error}</p>
+    )}
+
+    <div className="flex justify-end mt-7">
+      <button 
+      className="add-btn"
+      onClick={handleSubmit}
+      disabled={loading}
+      >
+        {taskId ? 'UPDATE TASK' : 'CREATE TASK'}
+      </button>
+    </div>
+  </div>
+</div>
+
+
     </DashboardLayout>
 
   )
