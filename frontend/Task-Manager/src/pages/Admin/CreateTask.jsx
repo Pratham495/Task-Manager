@@ -12,6 +12,7 @@ import SelectDropdown from '../../components/Inputs/SelectDropdown';
 import SelectUsers from '../../components/Inputs/SelectUsers';
 import TodoListInput from '../../components/Inputs/TodoListInput';
 import AddAttachmentsInput from '../../components/Inputs/AddAttachmentsInput';
+import axios from 'axios';
 
 
 const CreateTask = () => {
@@ -38,8 +39,9 @@ const CreateTask = () => {
     setTaskData((prevdata) => ({
       ...prevdata, [key]: value
     }))
+  };
 
-    const clearData = () => {
+   const clearData = () => {
       setTaskData({
             title:"",
     description:"",
@@ -50,10 +52,34 @@ const CreateTask = () => {
     attachments:[]
       })
     }
-  };
 
+  console.log(taskData)
   //create task
-  const CreateTask = async () =>{};
+  const CreateTask = async () =>{
+    setLoading(true);
+
+    try {
+      const todoList =  taskData.todoChecklist?.map((item) => ({
+        text:item,
+        completed: false,
+      }));
+
+      const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate).toISOString(),
+        todoChecklist: todoList,
+      });
+      toast.success("Task Created Successfully");
+      clearData();
+    } catch (error) {
+      console.error("Error Creating task:", error);
+      setLoading(false);
+    }finally
+    {
+      setLoading(false);
+    }
+
+  };
 
   //update task
    const updateTask = async () =>{};
@@ -77,12 +103,12 @@ const CreateTask = () => {
         setError('Due date is Required.')
         return;
       }
-       if(!taskData.assignedTo?.length === 0)
+       if(taskData.assignedTo?.length === 0)
       {
         setError('Task not assogined to any member.')
         return;
       }
-       if(!taskData.todoChecklist?.length === 0)
+       if(taskData.todoChecklist?.length === 0)
       {
         setError('Add atlease one todo task')
         return;

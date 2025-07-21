@@ -7,11 +7,10 @@ const AddAttachmentsInput = ({attachments, setAttachments}) => {
  const [option, setOption] = useState();
 
  const handleAddOption = () => {
-    debugger
     if(option.trim())
     {
         setAttachments([...attachments, option.trim()]);
-        //setOption("");
+        setOption("");
     }
  }
 console.log(option)

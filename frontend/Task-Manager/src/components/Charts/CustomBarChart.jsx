@@ -12,8 +12,10 @@ import {
 } from "recharts";
 
 const CustomBarChart = ({ data }) => {
-  const getGradientId = (priority) => {
-    switch (priority) {
+  console.log(data)
+  const getGradientId = (status) => {
+    console.log(status)
+    switch (status) {
       case "Low": return "lowGradient";
       case "Medium": return "mediumGradient";
       case "High": return "highGradient";
@@ -84,7 +86,7 @@ const CustomBarChart = ({ data }) => {
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={`url(#${getGradientId(entry.priority)})`}
+                fill={`url(#${getGradientId(entry.status)})`}
               />
             ))}
           </Bar>
