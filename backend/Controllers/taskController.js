@@ -66,8 +66,9 @@ const getTaskById = async (req, res) => {
 
 const createTask = async (req, res) => {
     try {
-        const { title, description, priority, dueDate, assignedTo, attachments, todoCheckList } = req.body;
+        const { title, description, priority, dueDate, assignedTo, attachements, todoChecklist } = req.body;
 
+        console.log(req)
         if (!Array.isArray(assignedTo)) {
             return res.status(400).json({ message: "assignedTo must be an array of user IDs" });
         }
@@ -79,8 +80,8 @@ const createTask = async (req, res) => {
             dueDate,
             assignedTo,
             createdBy: req.user._id,
-            attachments,
-            todoCheckList,
+            attachements,
+            todoChecklist,
         });
 
         res.status(201).json({ message: "Task created successfully", task });

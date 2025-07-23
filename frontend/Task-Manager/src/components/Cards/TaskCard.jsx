@@ -48,6 +48,7 @@ const TaskCard = ({
   console.log(assignedTo)
   console.log(completedTodoCount)
   console.log(todoChecklist)
+  console.log(attachmentCount)
   return (
     <div
       className=" bg-white rounded-xl py-4 shadow-md shadow-gray-100 border border-gray-200/50 cursor-pointer"
@@ -105,7 +106,7 @@ const TaskCard = ({
           <div>
             <label className="text-xs text-gray-500">Due Date</label>
             <p className="text-[13px] font-medium text-gray-900">
-              {moment(createdAt).format("Do MMM YYYY")}
+              {moment(dueDate).format("Do MMM YYYY")}
             </p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { PRIORITY_DATA } from '../../utils/data';
 import axiosInstance from '../../utils/axiosInstance';
@@ -28,7 +28,7 @@ const CreateTask = () => {
     dueDate:null,
     assignedTo:[],
     todoChecklist:[],
-    attachments:[]
+    attachements:[]
   })
   const [currentTask, setCurrentTask] = useState(null);
   const[error, setError] = useState("");
@@ -36,6 +36,8 @@ const CreateTask = () => {
   const[openDeleteAlert, setOpenDeleteAlert] = useState(false);
 
   const handleValueChange = (key,value) => {
+    debugger
+     console.log("Updating:", key, value);
     setTaskData((prevdata) => ({
       ...prevdata, [key]: value
     }))
@@ -43,19 +45,20 @@ const CreateTask = () => {
 
    const clearData = () => {
       setTaskData({
-            title:"",
+     title:"",
     description:"",
     priority:"Low",
     dueDate:null,
     assignedTo:[],
     todoChecklist:[],
-    attachments:[]
+    attachements:[]
       })
     }
 
-  console.log(taskData)
+ 
   //create task
-  const CreateTask = async () =>{
+  const CreateTask = async () => {
+    debugger
     setLoading(true);
 
     try {
@@ -64,11 +67,13 @@ const CreateTask = () => {
         completed: false,
       }));
 
+      console.log(todoList)
       const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
         todoChecklist: todoList,
       });
+      console.log(response)
       toast.success("Task Created Successfully");
       clearData();
     } catch (error) {
@@ -80,9 +85,45 @@ const CreateTask = () => {
     }
 
   };
-
+ console.log(taskData)
+ console.log(currentTask)
   //update task
-   const updateTask = async () =>{};
+   const updateTask = async () =>{
+    debugger
+    setLoading(true);
+
+    try {
+      const todoList = taskData.todoChecklist?.map((item) => {
+        const prevTodoChecklist = currentTask?.todoChecklist || [];
+        const matchedTask = prevTodoChecklist.find((task) => task.text == item);
+       
+        return {
+           text: item,
+           completed: matchedTask ? matchedTask.completed : false,
+        }
+      });
+
+      const response = await axiosInstance.put(
+        API_PATHS.TASKS.UPDATE_TASK(taskId),
+        {
+          ...taskData,
+          dueDate: new Date(taskData.dueDate).toISOString(),
+          todoChecklist:todoList,
+        }
+      );
+      console.log(response)
+      toast.success("Task Updated Successfully");
+    } catch (error) {
+      console.error("Error creating task:", error);
+      setLoading(false);
+    }
+    finally
+    {
+      setLoading(false);
+    }
+   };
+
+   
 
     const handleSubmit = async () => { 
       setError(null);
@@ -123,10 +164,48 @@ const CreateTask = () => {
     };
 
     //const Task info by ID
-    const getTaskDetailsByID = async () => {};
+    const getTaskDetailsByID = async () => {
+      try {
+        const response = await axiosInstance.get(
+          API_PATHS.TASKS.GET_TASK_BY_ID(taskId)
+        );
+
+        if(response.data)
+        {
+          const taskInfo = response.data;
+          setCurrentTask(taskInfo);
+
+          setTaskData((prevState) => ({
+            title: taskInfo.title,
+            description:taskInfo.description,
+            priority:taskInfo.priority,
+            dueDate:taskInfo.dueDate
+            ? moment(taskInfo.dueDate).format("YYYY-MM-DD")
+            : null,
+            assignedTo:taskInfo?.assignedTo?.map((item) => item?.id) || [],
+            todoChecklist:
+              taskInfo?.todoChecklist?.map((item) => item?.text) || [],
+              attachements: taskInfo?.attachements || [],
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);      
+      }
+    };
 
     //Delete Task
     const deleteTask = async () => {};
+
+    useEffect(() => {
+  if (taskId) {
+    getTaskDetailsByID();
+  }
+
+  return () => {
+    // Cleanup if necessary (optional)
+  };
+}, [taskId]);
+
   return (
     <DashboardLayout activeMenu="Create Task">
 <div className="mt-6">
@@ -230,9 +309,9 @@ const CreateTask = () => {
       </label>
 
       <AddAttachmentsInput
-      attachments={taskData?.attachments}
+      attachments={taskData?.attachements}
       setAttachments={(value)=>
-        handleValueChange("attachments", value)
+        handleValueChange("attachements", value)
       }
       
       />

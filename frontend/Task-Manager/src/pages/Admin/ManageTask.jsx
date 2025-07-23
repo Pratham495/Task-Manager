@@ -24,17 +24,17 @@ const ManageTask = () => {
           status: filterStatus === "All" ? "" : filterStatus
         },
       });
+      setAllTasks(response.data?.tasks?.length > 0 ? response.data.tasks: [])
+      //Map statusSummary data with fixed labels and order
+      const statusSummary = response.data?.statusSummary || {};
       console.log(response)
-    setAllTasks(response.data?.tasks?.length > 0 ? response.data.tasks: [])
-    //Map statusSummary data with fixed labels and order
-    const statusSummary = response.data?.statusSummary || {};
       console.log(statusSummary)
     const statusArray = [
       {label: "All", count: statusSummary.all || 0},
       {label: "Pending", count: statusSummary.pendingTasks || 0},
       {label: "In Progress", count: statusSummary.inProgressTasks || 0 },
       {label: "Completed", count: statusSummary.completedTasks || 0}
-    ];
+    ]; 
     
     setTabs(statusArray);
   
@@ -60,6 +60,10 @@ const ManageTask = () => {
 
 console.log(tabs)
 console.log(allTasks)
+
+const example = allTasks.map((item) => item.dueDate)
+const example1 = allTasks.map((item) => item.dueDate)
+console.log(example1)
   return (
     <DashboardLayout activeMenu="Manage Tasks">
       <div className=" my-5">
@@ -106,7 +110,7 @@ console.log(allTasks)
             createdAt={item.createdAt}
             dueDate={item.dueDate}
             assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
-            attachmentCount={item.attachments?.length || 0}
+            attachmentCount={item.attachements?.length || 0}
             completedTodoCount={item.completedCount || 0}
             todoChecklist={item.todoChecklist || []}
             onClick={() => {
