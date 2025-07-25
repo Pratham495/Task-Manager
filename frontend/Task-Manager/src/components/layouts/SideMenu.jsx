@@ -11,6 +11,7 @@ const SideMenu = ({ activeMenu }) => {
   console.log("User is:", user);
   console.log("sideMenuData:", sideMenuData);
 
+
   useEffect(() => {
     if (user) {
       setSideMenuData(

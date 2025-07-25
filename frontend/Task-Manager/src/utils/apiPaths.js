@@ -29,7 +29,7 @@ export const API_PATHS = {
 
     REPORTS: {
         EXPERT_TASKS: "/api/reports/export/tasks",
-        EXPORT_USERS: "/api/reposrts/export/users",
+        EXPORT_USERS: "/api/reports/export/users",
     },
 
     IMAGE:{

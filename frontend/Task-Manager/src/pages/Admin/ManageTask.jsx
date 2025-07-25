@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { LuFileSpreadsheet } from 'react-icons/lu';
 import TaskStatusTabs from '../../components/layouts/TaskStatusTabs';
 import TaskCard from '../../components/Cards/TaskCard';
+import toast from 'react-hot-toast';
 
 const ManageTask = () => {
   
@@ -49,8 +50,25 @@ const ManageTask = () => {
 
   //download task report
 
-  const handleDownloadReport = async () => {
-
+ const handleDownloadReport = async () => {
+    debugger
+    try {
+      /*The server will return binary data (like files), not JSON or text */
+      const response = await axiosInstance.get(API_PATHS.REPORTS.EXPERT_TASKS,{
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "task_details.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading expense details:", error);
+      toast.error("failed to download expense details. Please try again.");
+    }
   };
 
     useEffect(()=> {
@@ -62,7 +80,7 @@ console.log(tabs)
 console.log(allTasks)
 
 const example = allTasks.map((item) => item.dueDate)
-const example1 = allTasks.map((item) => item.dueDate)
+const example1 = allTasks.map((item) => item.completedTodoCount)
 console.log(example1)
   return (
     <DashboardLayout activeMenu="Manage Tasks">

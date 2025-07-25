@@ -15,12 +15,18 @@ const getTasks = async (req, res) => {
             tasks = await Task.find({ ...filter, assignedTo: req.user._id })
                 .populate("assignedTo", "name email profileImageUrl");
         }
-
+        
         // Calculate completed checklist items
-        tasks = await Promise.all(tasks.map(async (task) => {
-            const completedCount = task.todoChecklist.filter(item => item.completed).length;
-            return { ...task._doc, completedCount };
-        }));
+       tasks = await Promise.all(tasks.map(async (task) => {
+    console.log("Checklist:", task.todoChecklist);
+    const completedCount = (task.todoChecklist || []).filter(item => item.completed).length;
+    console.log(`Task ID: ${task._id}, Completed Count: ${completedCount}`);
+    return { ...task._doc, completedCount };
+}));
+
+
+        
+
 
         // Status summary counts
         const userFilter = req.user.role === "admin" ? {} : { assignedTo: req.user._id };

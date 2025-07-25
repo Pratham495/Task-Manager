@@ -1,6 +1,7 @@
 import React from "react";
 
-const Progress = ({ Progress, status }) => {
+const Progress = ({ progress, status }) => {
+  
   const getColor = () => {
     switch (status) {
       case "In Progress":
@@ -18,7 +19,7 @@ const Progress = ({ Progress, status }) => {
     <div className="w-full bg-gray-200 rounded-full h-1.5">
       <div
         className={`${getColor()} h-1.5 rounded-full text-center text-xs font-medium`}
-        style={{ width: `${Progress}` }}
+        style={{ width: `${progress}` }}
       ></div>
     </div>
   );
