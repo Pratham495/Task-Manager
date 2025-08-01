@@ -5,6 +5,7 @@ import { LuPaperclip } from "react-icons/lu";
 import moment from "moment";
 
 const TaskCard = ({
+  key,
   title,
   description,
   priority,
@@ -18,6 +19,7 @@ const TaskCard = ({
   todoChecklist,
   onClick,
 }) => {
+  console.log(key)
   const getStatusTagColor = () => {
     switch (status) {
       case "In Progress":
@@ -44,11 +46,7 @@ const TaskCard = ({
     }
   };
 
-  console.log(progress)
-  console.log(assignedTo)
-  console.log(completedTodoCount)
-  console.log(todoChecklist)
-  console.log(attachmentCount)
+  
   return (
     <div
       className=" bg-white rounded-xl py-4 shadow-md shadow-gray-100 border border-gray-200/50 cursor-pointer"

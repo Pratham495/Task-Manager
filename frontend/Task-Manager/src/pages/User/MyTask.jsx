@@ -45,7 +45,8 @@ const MyTask = () => {
   }
 
   const handleClick = (taskId) => {
-    navigate(`/user/tasks-details/:id ${taskId}`)
+    console.log(taskId)
+    navigate(`/user/tasks-details/${taskId}`)
   };
 
     useEffect(()=> {
@@ -57,7 +58,7 @@ console.log(tabs)
 console.log(allTasks)
 
 const example = allTasks.map((item) => item.dueDate)
-const example1 = allTasks.map((item) => item.completedTodoCount)
+const example1 = allTasks.map((item) => item._id)
 console.log(example1)
   return (
     <DashboardLayout activeMenu="Manage Tasks">
@@ -95,7 +96,7 @@ console.log(example1)
             completedTodoCount={item.completedCount || 0}
             todoChecklist={item.todoChecklist || []}
             onClick={() => {
-              handleClick(item);
+              handleClick(item._id);
             }}
             />
           ))}
