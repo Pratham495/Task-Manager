@@ -160,19 +160,18 @@ const updateTaskStatus = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
 const updateTaskChecklist = async (req, res) => {
     try {
-        const { todoCheckList } = req.body;
+        const { todoChecklist } = req.body; 
         const task = await Task.findById(req.params.id);
 
         if (!task) return res.status(404).json({ message: "Task not found" });
 
-        if (!task.assignedTo.includes(req.user._id) && req.user.role !== "admin") {
+        if (!task.assignedTo.map(String).includes(String(req.user._id)) && req.user.role !== "admin") {
             return res.status(403).json({ message: "Not authorized to update checklist" });
         }
 
-        task.todoChecklist = todoCheckList;
+        task.todoChecklist = todoChecklist;
 
         const completedCount = task.todoChecklist.filter(item => item.completed).length;
         const totalItems = task.todoChecklist.length;
@@ -188,7 +187,8 @@ const updateTaskChecklist = async (req, res) => {
 
         await task.save();
 
-        const updatedTask = await Task.findById(req.params.id).populate("assignedTo", "name email profileImageUrl");
+        const updatedTask = await Task.findById(req.params.id)
+            .populate("assignedTo", "name email profileImageUrl");
 
         res.json({ message: "Task checklist updated", task: updatedTask });
     } catch (error) {

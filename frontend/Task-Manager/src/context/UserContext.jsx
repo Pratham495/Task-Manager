@@ -42,14 +42,14 @@ const UserProvider = ({children}) => {
   setLoading(false);
  }
  
- const clearUSer = () => {
+ const clearUser = () => {
   setUser(null);
   localStorage.removeItem("token");
  };
 
  return (
   <UserContext.Provider 
-  value={{user,loading,updateUser,clearUSer}} >
+  value={{user,loading,updateUser,clearUser}} >
     {children}
   </UserContext.Provider>
  );

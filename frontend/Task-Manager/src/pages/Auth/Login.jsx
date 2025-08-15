@@ -20,13 +20,10 @@ const Login = () => {
     if (!email || !password || !ValidateEmail(email)) {
       if (!email && !password) {
         setError("Please enter both valid fields.");
-        alert('hii')
       } else if (!email || !ValidateEmail(email)) {
         setError("Please enter a valid email address.");
-        alert('hello')
       } else if (!password) {
         setError("Please enter a valid password.");
-        alert('bye')
       }
       return;
     }

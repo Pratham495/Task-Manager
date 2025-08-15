@@ -292,6 +292,7 @@ const CreateTask = () => {
           type="date"
           className="form-input w-full"
           value={taskData.dueDate}
+          min={new Date().toISOString().split("T")[0]} //Before the T date Part after the T time part
           onChange={({ target }) => handleValueChange("dueDate", target.value)}
         />
       </div>

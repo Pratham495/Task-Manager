@@ -25,55 +25,72 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
-
+  
   const prepareChartData = (data) => {
     const taskDistribution = data?.taskDistribution || null;
     const taskPriorityLevels = data?.taskPriorityLevels || null;
-
+    
     const taskDistributionData = [
       {status: "Pending", count: taskDistribution?.Pending || 0},
       {status: "In Progress", count: taskDistribution?.InProgress || 0},
       {status: "Completed", count: taskDistribution?.Completed || 0},
     ]
     setPieChartData(taskDistributionData);
-
+    
     const PriorityLevelData = [
       {status: "Low", count: taskPriorityLevels?.Low || 0},
       {status: "Medium", count: taskPriorityLevels?.Medium || 0},
       {status: "High", count: taskPriorityLevels?.High || 0},
     ];
-
+    
     setBarChartData(PriorityLevelData);
-  
+    
   }
- 
+  
   const getDashboardData = async () => {
     try{
       const response = await axiosInstance.get(
         API_PATHS.TASKS.GET_DASHBOARD_DATA
       );
       if(response.data)
+        {
+          setDashboardData(response.data);
+          prepareChartData(response.data?.charts || null)
+        }
+      }
+      catch (error)
       {
-        setDashboardData(response.data);
-        prepareChartData(response.data?.charts || null)
+        console.error('Error Fetching Users: ',error)
       }
     }
-    catch (error)
-    {
-      console.error('Error Fetching Users: ',error)
+    
+    useEffect(()=>{
+      getDashboardData();
+      return () => {};
+    },[])
+    
+    const onSeeMore = () => {
+      navigate('/admin/tasks')
     }
-  }
-console.log(dashboardData, 'dashboarddata');
-console.log(pieChartData)
-console.log("Recent Tasks:", dashboardData?.recentTask);
-  useEffect(()=>{
-    getDashboardData();
-    return () => {};
-  },[])
+    
+    const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good Morning";
+      if (hour < 18) return "Good Afternoon";
+      return "Good Evening";
+    };
+    const [greeting, setGreeting] =  useState(getGreeting());
+  console.log(getGreeting());
 
-  const onSeeMore = () => {
-    navigate('/admin/tasks')
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGreeting(getGreeting());
+    }, 60 * 1000); // check every 1 minute
+
+    return () => clearInterval(interval);
+  }, []);
+  console.log(greeting)
+
   return (
 <DashboardLayout activeMenu="Dashboard">
   <div className="my-8 space-y-8">
@@ -81,7 +98,7 @@ console.log("Recent Tasks:", dashboardData?.recentTask);
     {/* Greeting Section */}
     <div>
       <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-        Good Morning, {user?.name}!
+        {greeting}, {user?.name}
       </h2>
       <p className="text-sm md:text-base text-gray-500 mt-1">
         {moment().format("dddd, Do MMM YYYY")}

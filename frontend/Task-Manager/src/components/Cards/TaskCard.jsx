@@ -5,7 +5,6 @@ import { LuPaperclip } from "react-icons/lu";
 import moment from "moment";
 
 const TaskCard = ({
-  key,
   title,
   description,
   priority,
@@ -19,7 +18,7 @@ const TaskCard = ({
   todoChecklist,
   onClick,
 }) => {
-  console.log(key)
+  
   const getStatusTagColor = () => {
     switch (status) {
       case "In Progress":

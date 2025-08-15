@@ -35,10 +35,42 @@ function ViewTaskDetails() {
   };
 
   const updateTodoChecklist = async (index) => {
+    debugger
+    const todoChecklist = [...task?.todoChecklist];
+    const taskId = id;
+
+    if(todoChecklist && todoChecklist[index])
+    {
+      todoChecklist[index].completed = !todoChecklist[index].completed
+    }
+    console.log(todoChecklist)
+    console.log(taskId)
+    try {
+      const response = await axiosInstance.put(
+        API_PATHS.TASKS.UPDATE_TODO_CHECKLIST(taskId),
+        { todoChecklist }
+      );
+      if(response.status === 200)
+      {
+        setTask(response.data?.task || task);
+      }
+      else
+      {
+        todoChecklist[index].completed = !todoChecklist[index].completed;
+      }
+
+    } catch (error) {
+              todoChecklist[index].completed = !todoChecklist[index].completed;
+
+    }
 
   }
 
   const handleLinkClick = (link) => {
+    if(!/^https?:\/\//i.test(link))
+    {
+      link = "https://" + link;
+    }
     window.open(link, "_blank");
   };
 
@@ -123,7 +155,7 @@ function ViewTaskDetails() {
                     Attachments
                   </label>
 
-                  {task?.attachments?.map((link, index) => (
+                  {task?.attachements?.map((link, index) => (
                     <Attachments
                     key={`link_${index}`}
                     link={link}
