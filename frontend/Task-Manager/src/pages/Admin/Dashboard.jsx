@@ -76,11 +76,11 @@ const Dashboard = () => {
     const getGreeting = () => {
       const hour = new Date().getHours();
       if (hour < 12) return "Good Morning";
-      if (hour < 18) return "Good Afternoon";
-      return "Good Evening";
+      if (hour < 15) return "Good Afternoon";
+      if (hour < 18) return "Good Evening"
+      return "Good Night";
     };
     const [greeting, setGreeting] =  useState(getGreeting());
-  console.log(getGreeting());
 
   useEffect(() => {
     const interval = setInterval(() => {
